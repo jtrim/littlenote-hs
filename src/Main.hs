@@ -3,19 +3,30 @@ module Main where
   import Data.Time.LocalTime (getZonedTime)
   import Data.Time.Format    (formatTime, defaultTimeLocale)
   import Data.List           (intercalate)
+  import Options             (Options(..), defaultOptions, applyOptions)
+  import Arguments           (determineArguments)
+  import Actions             (determineAction, printNotes)
+  import NotesFile           (path)
 
   main = do
     args <- getArgs
-    processArgs args
+    processInput args
 
-  processArgs [] = printNotes
-  processArgs args = do
-    addition <- formatNoteLine $ getIncomingNote args
-    appendFile notesFilePath addition
-
-  printNotes = do
-    notes <- readFile notesFilePath
-    putStr $ unlines $ reverse $ take 10 $ reverse $ lines notes
+  processInput [] = printNotes defaultOptions
+  processInput rawArgs =
+    let
+      arguments    = determineArguments rawArgs
+      options      = applyOptions arguments
+      action       = determineAction arguments
+      incomingNote = getIncomingNote rawArgs
+      in
+        if incomingNote /= ""
+        then
+          do
+            newNote <- formatNoteLine $ getIncomingNote rawArgs
+            appendFile NotesFile.path newNote
+        else
+          action options
 
   currentFormattedTime = do
     t <- getZonedTime
@@ -26,13 +37,7 @@ module Main where
     return $ formattedTime ++ " - " ++ s ++ "\n"
 
   getIncomingNote []   = ""
-  getIncomingNote [x]  = x
-  getIncomingNote args = let
-    postDashyArgs = tail $ dropWhile (\x -> x /= "--") args
-    in
-      messageFrom postDashyArgs
-      where
-        messageFrom []    = head args
-        messageFrom args' = intercalate " " args'
+  getIncomingNote ("--":postDashyArgs) = intercalate " " postDashyArgs
+  getIncomingNote args = getIncomingNote $ dropWhile (\x -> x /= "--") args
 
-  notesFilePath = "./littlenotes.txt"
+
