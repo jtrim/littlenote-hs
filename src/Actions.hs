@@ -1,9 +1,11 @@
 module Actions (determineAction, printNotes) where
-  import Data.List (find)
+  import Data.List (find, intercalate)
   import Arguments (name)
   import Options   (Options(..), defaultOptions)
-  import NotesFile (path)
+  import NotesFile (path, lastNote, contents, writeTempNotesFile, commitTempNotesFile)
   import System.Posix.Process (getProcessStatus, forkProcess, executeFile)
+  import System.IO (hPutStr, hClose, readFile, withFile, IOMode(WriteMode))
+  import System.IO.Temp (openTempFile)
 
   determineAction [] = printNotes
   determineAction (arg:args) = case foundAction of
@@ -17,7 +19,8 @@ module Actions (determineAction, printNotes) where
       ("-h", printUsage),
       ("--help", printUsage),
       ("-e", editNotes),
-      ("--edit", editNotes)
+      ("--edit", editNotes),
+      ("--amend", amendLastNote)
     ]
 
   printUsage options = do
@@ -41,3 +44,22 @@ module Actions (determineAction, printNotes) where
 
   waitFor pid = do
     getProcessStatus True False pid
+
+  amendLastNote options = do
+    (path, handle) <- openTempFile "/tmp" "littlenote-amend.txt"
+    lastNote <- NotesFile.lastNote
+    hPutStr handle lastNote
+    hClose handle
+
+    pid <- forkProcess $ openVim path
+    _ <- waitFor pid
+
+    amendedNote <- readFile path
+    allNotes <- NotesFile.contents
+
+    tempNotesPath <- writeTempNotesFile $ replaceLastNote allNotes amendedNote
+    commitTempNotesFile tempNotesPath
+
+    printNotes defaultOptions
+
+  replaceLastNote notes updatedNote = intercalate "\n" $ (init $ lines notes) ++ [updatedNote]
