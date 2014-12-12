@@ -8,9 +8,10 @@ This is a partial implementation of [Littlenote](https://github.com/jtrim/little
 - Add proper usage
 - `--amend` option
 - `--pop` option
+- `--all` option
+- `-d` option
+- `--show` option
 - implement `--div` or axe it
-- implement `-d`
-- implement `--show`
 - refactor option parsing to be less ad hoc
 - refactor / extract action and argument parsing to an external lib
 
