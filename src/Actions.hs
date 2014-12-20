@@ -2,7 +2,7 @@ module Actions (determineAction, printNotes) where
   import Data.List (find, intercalate)
   import Arguments (name)
   import Options   (Options(..), defaultOptions)
-  import NotesFile (path, lastNote, contents, writeTempNotesFile, commitTempNotesFile)
+  import NotesFile (path, lastNote, contents, writeTempNotesFile, commitTempNotesFile, noteLines)
   import System.Posix.Process (getProcessStatus, forkProcess, executeFile)
   import System.IO (hPutStr, hClose, readFile, withFile, IOMode(WriteMode))
   import System.IO.Temp (openTempFile)
@@ -20,7 +20,8 @@ module Actions (determineAction, printNotes) where
       ("--help", printUsage),
       ("-e", editNotes),
       ("--edit", editNotes),
-      ("--amend", amendLastNote)
+      ("--amend", amendLastNote),
+      ("--pop", popLastNote)
     ]
 
   printUsage options = do
@@ -63,3 +64,11 @@ module Actions (determineAction, printNotes) where
     printNotes defaultOptions
 
   replaceLastNote notes updatedNote = intercalate "\n" $ (init $ lines notes) ++ [updatedNote]
+
+  popLastNote _ = do
+    noteLines' <- NotesFile.noteLines
+    let notes = init noteLines'
+        popped = last noteLines'
+    tempNotesPath <- NotesFile.writeTempNotesFile $ intercalate "\n" notes
+    NotesFile.commitTempNotesFile tempNotesPath
+    putStrLn popped

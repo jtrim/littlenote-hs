@@ -1,4 +1,4 @@
-module NotesFile (path, contents, lastNote, writeTempNotesFile, commitTempNotesFile) where
+module NotesFile (path, contents, lastNote, writeTempNotesFile, commitTempNotesFile, noteLines) where
   import System.IO.Temp   (openTempFile)
   import System.IO        (hPutStr, hClose)
   import System.Directory (renameFile, removeFile)
@@ -8,6 +8,10 @@ module NotesFile (path, contents, lastNote, writeTempNotesFile, commitTempNotesF
   contents = do
     notes <- readFile path
     return notes
+
+  noteLines = do
+    c <- contents
+    return $ lines c
 
   lastNote = do
     notes <- contents

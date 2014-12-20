@@ -6,7 +6,7 @@ This is a partial implementation of [Littlenote](https://github.com/jtrim/little
 
 - ~~`--edit` option~~
 - ~~`--amend` option~~
-- `--pop` option
+- ~~`--pop` option~~
 - `--all` option
 - `-d` option
 - `--show` option
