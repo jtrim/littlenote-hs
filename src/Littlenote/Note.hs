@@ -1,6 +1,7 @@
-module Littlenote.Note (Note(..), parse, render) where
+module Littlenote.Note (Note(..), parse, render, parseLines, renderLines) where
   import Text.Regex.Posix ((=~))
   import Data.Time.LocalTime (LocalTime)
+  import Data.List (intercalate)
   import qualified Littlenote.Date as D
 
   data Note = Note {
@@ -22,3 +23,9 @@ module Littlenote.Note (Note(..), parse, render) where
             recordedAt = recordedAt,
             text       = text
           }) = D.format recordedAt ++ " - " ++ text
+
+  parseLines :: String -> [Note]
+  parseLines = map parse . lines
+
+  renderLines :: [Note] -> String
+  renderLines = intercalate "\n" . map render
