@@ -34,7 +34,8 @@ library
   build-depends:
     base >= 4.7 && <4.8,
     time >= 1.5,
-    regex-posix >= 0.95
+    regex-posix >= 0.95,
+    directory >= 1.0.0.1
 
 test-suite spec
   default-language: Haskell2010
@@ -43,7 +44,8 @@ test-suite spec
   main-is:          Spec.hs
   build-depends:
     base >= 4.7 && <4.8,
+    hspec >= 2.1.2,
+    littlenote-hs,
     time >= 1.5,
     regex-posix >= 0.95,
-    littlenote-hs,
-    hspec >= 2.1.2
+    directory >= 1.0.0.1

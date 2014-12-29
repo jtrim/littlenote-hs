@@ -2,3 +2,4 @@ dist
 littlenotes.txt
 log.txt
 .cabal-sandbox
+tmp
