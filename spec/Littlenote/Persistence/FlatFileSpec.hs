@@ -7,10 +7,10 @@ module Littlenote.Persistence.FlatFileSpec where
 
   spec = do
     context "within an application context" $ do
-      describe "lines" $ do
+      describe "getNotes" $ do
         it "reads note lines from a file" $ do
           let applicationContext = C.withNotePath "./spec/fixtures/notes.txt" C.defaultContext
-          lines' <- Subject.lines applicationContext
+          lines' <- Subject.getNotes applicationContext
           lines' `shouldBe` [
               N.parse "12/09/14 10:13:20 AM - Fixture note 1",
               N.parse "12/09/14 10:13:33 AM - Fixture note 2"
