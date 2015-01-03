@@ -35,6 +35,7 @@ library
     base >= 4.7 && <4.8,
     time >= 1.5,
     regex-posix >= 0.95,
+    split >= 0.2.2,
     directory >= 1.0.0.1
 
 test-suite spec
@@ -48,4 +49,5 @@ test-suite spec
     littlenote-hs,
     time >= 1.5,
     regex-posix >= 0.95,
+    split >= 0.2.2,
     directory >= 1.0.0.1

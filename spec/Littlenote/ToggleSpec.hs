@@ -28,3 +28,6 @@ module Littlenote.ToggleSpec where
         let toggles = [toggleA, toggleB, Subject.BooleanToggle "-w" "--wat"]
         Subject.toggles ["-f", "10", "--help", "--doesnt-exist", "--", "--wat"] toggles
           `shouldBe` [(toggleA, Just "10"), (toggleB, Nothing)]
+
+      it "can handle arguments split with = (e.g. -n=10)" $ do
+        Subject.toggles ["-f=10"] toggles `shouldBe` [(toggleA, Just "10")]

@@ -1,5 +1,6 @@
 module Littlenote.Toggle (toggles, extractToggle, KnownToggle(..)) where
   import Data.List (find, takeWhile)
+  import Data.List.Split (splitOn)
 
   type Short = String
   type Long = String
@@ -21,9 +22,10 @@ module Littlenote.Toggle (toggles, extractToggle, KnownToggle(..)) where
         Just t  -> t:suppliedToggles
       pairs = zip validArgs $ tail validArgs ++ [""]
         where
-          isDashy "--" = True
-          isDashy _    = False
-          validArgs = takeWhile (not . isDashy) arguments
+          isDashy "--"  = True
+          isDashy _     = False
+          processedArgs = concat $ map (\x -> splitOn "=" x) arguments
+          validArgs     = takeWhile (not . isDashy) processedArgs
 
   extractToggle :: (ToggleIdentifier, ToggleValue) -> [KnownToggle] -> Maybe UserToggle
   extractToggle (identifier, value) knownToggles =
